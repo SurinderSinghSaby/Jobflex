@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./jobflex-backend  # Path to the Dockerfile directory
+    ports:
+      - "3002:8000"    # Maps port 8080 on host to port 8000 inside container
+    volumes:
+      - ./jobflex-backend:/app  # Mounts the backend folder to /app in the container
+    environment:
+      - NODE_ENV=production
+
+  frontend:
+    build: ./jobflex-frontend  # Path to the Dockerfile directory
+    ports:
+      - "3000:3000"    # Maps port 3000 on host to port 3000 inside container
+    volumes:
+      - ./jobflex-frontend:/app  # Mounts the backend folder to /app in the container
+    depends_on:
+      - backend        # Ensures backend starts first
