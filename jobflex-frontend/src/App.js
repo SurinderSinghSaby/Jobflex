@@ -1,23 +1,15 @@
-import React, {Suspense} from 'react'
-import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import React from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-import Auth from './user/pages/Auth'
+import { AcceptedJob, AddJob, AllJob, PendingJob, RejectedJob, Stats, UpdateJob } from './job/pages'
 import Dashboard from './job/pages/Dashboard'
-import Landing from './shared/pages/Landing'
-import {UpdateJob, AllJob, AddJob, PendingJob, AcceptedJob, RejectedJob, Stats } from './job/pages'
-import ChangeUser from './user/pages/ChangeUser'
 import { AuthContext } from './shared/context/auth-context'
-import ProtectedRoute from './user/pages/ProtectedRoute'
-import ProtectedLogin from './user/pages/ProtectedLogin'
 import { useAuth } from './shared/hooks/auth-hook'
-
-//const Stats = React.lazy(() => import('./job/pages/Stats'))
-//const UpdateJob = React.lazy(() => import('./job/pages/UpdateJob'))
-//const PendingJob = React.lazy(() => import('./job/pages/PendingJob'))
-//const AcceptedJob = React.lazy(() => import('./job/pages/AcceptedJob'))
-//const RejectedJob = React.lazy(() => import('./job/pages/RejectedJob'))
-//const AllJob = React.lazy(() => import('./job/pages/AllJob'))
-//const AddJob = React.lazy(() => import('./job/pages/AddJob'))
+import Landing from './shared/pages/Landing'
+import Auth from './user/pages/Auth'
+import ChangeUser from './user/pages/ChangeUser'
+import ProtectedLogin from './user/pages/ProtectedLogin'
+import ProtectedRoute from './user/pages/ProtectedRoute'
 
 const router = createBrowserRouter([
   {path: '/dashboard', element:
