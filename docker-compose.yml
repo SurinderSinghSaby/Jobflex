@@ -2,19 +2,23 @@ version: '3.8'
 
 services:
   backend:
-    build: ./jobflex-backend  # Path to the Dockerfile directory
+    build: ./jobflex-backend  # Path to the Dockerfile directory for backend
     ports:
-      - "3002:8000"    # Maps port 8080 on host to port 8000 inside container
+      - "3002:8000"  # Maps port 3002 on host to port 8000 inside container
     volumes:
-      - ./jobflex-backend:/app  # Mounts the backend folder to /app in the container
+      - ./jobflex-backend:/app  # Mount the backend folder to /app in the container
+      - ./jobflex-backend/node_modules:/app/node_modules  # Mount node_modules to avoid overriding in container
     environment:
       - NODE_ENV=production
+    entrypoint: ["sh", "-c", "npm install && npm start"]  # Run npm install before starting the app
 
   frontend:
-    build: ./jobflex-frontend  # Path to the Dockerfile directory
+    build: ./jobflex-frontend  # Path to the Dockerfile directory for frontend
     ports:
-      - "3000:3000"    # Maps port 3000 on host to port 3000 inside container
+      - "3000:3000"  # Maps port 3000 on host to port 3000 inside container
     volumes:
-      - ./jobflex-frontend:/app  # Mounts the backend folder to /app in the container
+      - ./jobflex-frontend:/app  # Mount the frontend folder to /app in the container
+      - ./jobflex-frontend/node_modules:/app/node_modules  # Mount node_modules to avoid overriding in container
     depends_on:
-      - backend        # Ensures backend starts first
+      - backend  # Ensure backend is up before frontend
+    entrypoint: ["sh", "-c", "npm install && npm start"]  # Run npm install before starting the app
