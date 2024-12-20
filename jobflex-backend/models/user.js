@@ -6,8 +6,8 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     name: {type: String, required: true},
     email: {type:String, required: true, unique: true},
-    password: {type: String, required: true, minlength: 6},
-    jobs: [{type: mongoose.Types.ObjectId, required: true, ref: 'Job'}]
+    password: {type: String, required: false, minlength: 6},
+    jobs: [{type: mongoose.Types.ObjectId, required: false, ref: 'Job'}]
 });
 
 userSchema.plugin(uniqueValidator);

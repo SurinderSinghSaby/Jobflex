@@ -10,7 +10,7 @@ services:
       - ./jobflex-backend/node_modules:/app/node_modules  # Mount node_modules to avoid overriding in container
     environment:
       - NODE_ENV=production
-    entrypoint: ["sh", "-c", "npm install"]  # Run npm install before starting the app
+    entrypoint: ["sh", "-c", "npm install && npm start"]  # Run npm install before starting the app
 
   frontend:
     build: ./jobflex-frontend  # Path to the Dockerfile directory for frontend
@@ -21,4 +21,4 @@ services:
       - ./jobflex-frontend/node_modules:/app/node_modules  # Mount node_modules to avoid overriding in container
     depends_on:
       - backend  # Ensure backend is up before frontend
-    entrypoint: ["sh", "-c", "npm install"]  # Run npm install before starting the app
+    entrypoint: ["sh", "-c", "npm install && npm start"]  # Run npm install before starting the app
