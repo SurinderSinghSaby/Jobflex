@@ -145,51 +145,106 @@ const updateJob = async (req, res, next) => {
   res.status(200).json({ job: job.toObject({ getters: true }) });
 };
 
+//const deleteJob = async (req, res, next) => {
+//    const { userId, jobIds } = req.body; // Destructure userId and jobIds from the request body
+//    const userObjectId = new mongoose.Types.ObjectId(userId);
+//    let job;
+
+//    if (!userId) {
+//      const error = new HttpError("Authentication failed. No user data.", 401);
+//      return next(error);
+//    }
+//    console.log(jobIds);
+//    for (let i = 0; i < jobIds.length; i++) {
+//        try {
+
+//            job = await Job.findById(jobIds[i]);
+      
+//        } catch (err) {
+//            const error = new HttpError(
+//                'Something went wrong, could not delete job.', 500
+//            );
+//            return next(error);
+//        }
+
+//        if (!job) {
+//            const error = new HttpError('Could not find job for this id.', 404);
+//            return next(error);
+//        }
+//        console.log(job.creatorId);
+//        console.log(userObjectId);
+        
+//        //if(job.creatorId.equals(userObjectId)){
+//        //    const error = new HttpError('You are not allowed to delete this job.', 401);
+//        //    return next(error);
+//        //}
+       
+//        try {
+//          const sess = await mongoose.startSession();
+//          sess.startTransaction();
+//          await job.deleteOne({ session: sess });
+//          job.creatorId.jobs.pull(job._id);
+//          await job.creatorId.save({ session: sess });
+//          await sess.commitTransaction();
+//      } catch (err) {
+//        const error = new HttpError(
+//          'Something went wrong, could not find a job.',
+//          500
+//        );
+//        return next(error);
+//    }
+//    res.status(200).json({ message: 'Deleted place.' });
+//    }
+//  };
+
 const deleteJob = async (req, res, next) => {
-    const jobId = req.params.jobid; // { pid: 'p1' }
-  
-    let job;
+  const { userId, jobIds } = req.body; // Destructure userId and jobIds from the request body
 
-    try{
-        job = await Job.findById(jobId).populate('creatorId');
-    }
-    catch (err){
-        const error = new HttpError(
-            'Something went wrong, could not delete job.', 500
-        );
-        return next(error);
-    }
+  // Ensure userId is provided
+  if (!userId) {
+      const error = new HttpError('Authentication failed. No user data.', 401);
+      return next(error);
+  }
 
-    if (!job) {
-        const error = new HttpError('Could not find job for this id.', 404);
-        return next(error);
-    }
+  // Convert userId to ObjectId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
 
-    if(job.creatorId.id !== req.userData.userId){
-        const error = new HttpError('You are not allowed to delete this job.', 401);
-        return next(error);
+  try {
+    const jobs = await Job.find({ creatorId: userObjectId, _id: { $in: jobIds } }).populate('creatorId');
+
+    if (!jobs || jobs.length === 0) {
+        return next(new HttpError('Could not find any jobs for this user or the specified job IDs.', 404));
     }
 
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
 
-   
-    try {
-        const sess = await mongoose.startSession();
-        sess.startTransaction();
+    for (const job of jobs) {
+        if (!job.creatorId.equals(userObjectId)) {
+            await sess.abortTransaction();
+            sess.endSession();
+            return next(new HttpError('You are not allowed to delete this job.', 401));
+        }
+
         await job.deleteOne({ session: sess });
         job.creatorId.jobs.pull(job._id);
         await job.creatorId.save({ session: sess });
-        await sess.commitTransaction();
-    } catch (err) {
-      const error = new HttpError(
-        'Something went wrong, could not find a job.',
-        500
-      );
-      return next(error);
     }
 
-    
-    res.status(200).json({ message: 'Deleted place.' });
-    };
+    await sess.commitTransaction();
+    sess.endSession();
+
+    res.status(200).json({ message: 'Selected jobs deleted successfully.' });
+} catch (err) {
+    console.error(err);
+    if (sess) {
+        await sess.abortTransaction();
+        sess.endSession();
+    }
+    return next(new HttpError('Something went wrong, could not delete jobs.', 500));
+}
+};
+
 
 
 exports.getJobById = getJobById;

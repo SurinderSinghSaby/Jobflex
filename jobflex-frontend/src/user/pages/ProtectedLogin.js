@@ -6,7 +6,7 @@ const ProtectedLogin= ({ children }) => {
   const auth = useContext(AuthContext);
 
   if (auth.isLoggedIn) {
-    return <Navigate to='/dashboard/:userId' />;
+    return <Navigate to='/dashboard/' />;
   }
   return children;
 };

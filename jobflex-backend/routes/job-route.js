@@ -29,7 +29,7 @@ router.patch("/:jobid",[
     check('company').isLength({min: 1})
 ], JobController.updateJob);
 
-router.delete("/:jobid", JobController.deleteJob);
+router.delete("/", JobController.deleteJob);
 
 
 module.exports = router;
