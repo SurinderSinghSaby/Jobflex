@@ -18,7 +18,7 @@ jobs:
       run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
     
     - name: Build the Docker image
-      run: docker build -t cicd-pipeline .
+      run: docker build -t cicd-pipeline ./jobflex-backend
     
     - name: Push to Dockerhub
       run: docker push surindersinghsaby/cicd-pipeline:latest
