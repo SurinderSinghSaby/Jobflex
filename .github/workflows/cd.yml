@@ -1,0 +1,22 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["Docker Image CI"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+  
+    - name: Pull docker image
+      run: sudo docker pull surindersinghsaby/cicd-pipeline:latest
+    
+    - name: Delete Old docker container
+      run: docker rm -f cicd-pipeline-container || true
+
+    - name: Run docker container
+      run: docker run -d --name cicd-pipeline-container -p 8000:8000 surindersinghsaby/cicd-pipeline:latest
