@@ -29,7 +29,7 @@ app.use("/api/jobs", jobRoutes); // => /api/jobs
 app.use("/api/user", userRoutes); // => /api/users
 
 // Serve React static files
-const buildPath = path.join(__dirname,"frontend", "build"); // Adjust the folder path if needed
+const buildPath = path.join(__dirname, "frontend", "build"); // Adjust the folder path if needed
 app.use(express.static(buildPath));
 
 // Catch-all route for serving React's index.html
@@ -37,16 +37,18 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(buildPath, "index.html"));
 });
 
-// Error handling
+// Error handling middleware for undefined routes
 app.use((req, res, next) => {
   const error = new HttpError("Could not find this route.", 404);
-  throw error;
+  return next(error); // Pass error to the next middleware
 });
 
+// General error handler
 app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);
   }
+  // Ensure that the error code is valid and default to 500
   res.status(error.code || 500);
   res.json({ message: error.message || "An unknown error occurred!" });
 });
