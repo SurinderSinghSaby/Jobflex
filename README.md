@@ -88,17 +88,12 @@ PORT=5000
 
 ## Running Locally
 
-**Start backend server**
+**Start backend server and frontend server**
 ```bash
-cd server
-npm start
+docker compose up --build
 ```
 
-**Start frontend**
-```bash
-cd ../client
-npm start
-```
+
 
 Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
