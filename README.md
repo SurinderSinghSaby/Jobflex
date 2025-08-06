@@ -154,7 +154,7 @@ Deletes an application.
 ---
 
 ## Screenshots
-_Add screenshots here to showcase your app._
+
 
 ---
 
